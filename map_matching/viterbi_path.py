@@ -77,7 +77,7 @@ class IndexedIterator(list):
         self.buffer = []
         super(IndexedIterator, self).__init__()
 
-    def next(self):
+    def __next__(self):
         if self.buffer:
             item = self.buffer.pop()
         else:
@@ -85,6 +85,9 @@ class IndexedIterator(list):
         # Cache it
         self.append(item)
         return item
+
+    def next(self):
+        return self.__next__()
 
     def __iter__(self):
         return self
@@ -183,6 +186,7 @@ class ViterbiSearch(object):
             if candidate is None:
                 # A new start
                 start_state = next(states) if winner is None else states[-1]
+
                 pqueue = self._start(start_state)
                 winner = None
                 scanned_candidates = {}
@@ -211,7 +215,10 @@ class ViterbiSearch(object):
             if timestamp + 1 < len(states):
                 next_state = states[timestamp + 1]
             else:
-                next_state = next(states)
+                try:
+                    next_state = next(states)
+                except StopIteration:
+                    return
 
             transition_costs = self.calculate_transition_costs(
                 candidate.body, [c.body for c in next_state])

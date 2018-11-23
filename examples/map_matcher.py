@@ -205,25 +205,28 @@ def parse_argv(argv):
 
 def main(argv):
     params = parse_argv(argv)
+
     if not params:
         # Something is wrong
         return 1
     uri, road_table_name, search_radius, max_route_distance = params
 
-    sequence = [map(float, line.strip().split()) for line in sys.stdin if line.strip()]
+    with open("./sequence_in_berlin.txt", "r") as file:
+        sequence = [list(map(float, line.strip().split())) for line in file if line.strip()]
 
     conn = psycopg2.connect(uri)
+    print("Connected")
     candidates = map_match(conn, road_table_name, sequence, search_radius, max_route_distance)
     conn.close()
 
     for candidate in candidates:
-        print '         Measurement ID: {0}'.format(candidate.measurement.id)
-        print '             Coordinate: {0:.6f} {1:.6f}'.format(*map(float, (candidate.measurement.lon, candidate.measurement.lat)))
-        print '    Matche d coordinate: {0:.6f} {1:.6f}'.format(*map(float, (candidate.lon, candidate.lat)))
-        print '        Matched edge ID: {0}'.format(candidate.edge.id)
-        print 'Location along the edge: {0:.2f}'.format(candidate.location)
-        print '               Distance: {0:.2f} meters'.format(candidate.distance)
-        print
+        print('         Measurement ID: {}'.format(candidate.measurement.id))
+        print('     Coordinate: {0:.6f} {1:.6f}'.format(*map(float, (candidate.measurement.lon, candidate.measurement.lat))))
+        print('    Matched coordinate: {0:.6f} {1:.6f}'.format(*map(float, (candidate.lon, candidate.lat))))
+        print('        Matched edge ID: {0}'.format(candidate.edge.id))
+        print('Location along the edge: {0:.2f}'.format(candidate.location))
+        print('               Distance: {0:.2f} meters'.format(candidate.distance))
+        print("")
 
     return 0
 

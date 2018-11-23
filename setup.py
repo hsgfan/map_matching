@@ -13,7 +13,7 @@ setup(
     version='0.1',
     description='A Map Matching Library in Python',
     long_description=readme,
-    author='Mapillary',
+    author='Janos Brauer',
     url='https://github.com/mapillary/map_matching',
     packages=['map_matching'],
     install_requires=['geopy'],
@@ -29,6 +29,6 @@ setup(
         'Topic :: Software Development :: Libraries :: Python Modules',
         'Topic :: Scientific/Engineering :: GIS',
         'Programming Language :: Python',
-        'Programming Language :: Python :: 2.7'
+        'Programming Language :: Python :: 3.7'
     )
 )

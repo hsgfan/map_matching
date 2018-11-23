@@ -4,9 +4,9 @@ import itertools
 
 from geopy.distance import vincenty
 
-import shortest_path
-import viterbi_path
-import road_routing
+from . import shortest_path
+from . import viterbi_path
+from . import road_routing
 
 try:
     from itertools import (
@@ -182,7 +182,10 @@ class MapMatching(viterbi_path.ViterbiSearch):
         winners = list(self.offline_search(candidates))
         set_directions(winners)
         for winner in winners:
-            yield winner
+            try:
+                yield winner
+            except StopIteration:
+                return
 
     def online_match(self, candidates):
         last_winner = None

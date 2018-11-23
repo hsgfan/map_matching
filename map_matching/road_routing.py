@@ -1,7 +1,7 @@
 import collections
 import itertools
 
-import shortest_path as sp
+from . import shortest_path as sp
 from .utils import Edge
 
 try:
