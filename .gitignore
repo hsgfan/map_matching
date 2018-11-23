@@ -56,3 +56,12 @@ docs/_build/
 
 # PyBuilder
 target/
+
+# Jetbrains
+.idea/
+
+# Mac 
+.DS_Store
+
+# mapping data
+data/
