@@ -254,7 +254,10 @@ class ViterbiSearch(object):
             if last_winner and new_start:
                 path = _reconstruct_path(last_winner, last_scanned_candidates)
                 for candidate in reversed(path):
-                    yield candidate.body
+                    try:
+                        yield candidate.body
+                    except StopIteration:
+                        return
             last_winner = winner
             last_scanned_candidates = scanned_candidates
 
@@ -262,7 +265,10 @@ class ViterbiSearch(object):
         if last_winner:
             path = _reconstruct_path(last_winner, last_scanned_candidates)
             for candidate in reversed(path):
-                yield candidate.body
+                try:
+                    yield candidate.body
+                except StopIteration:
+                    return
 
     # Online search only guarantees the local optimum (the winner at
     # current state). The knowledge about the furture candidates is
@@ -275,8 +281,10 @@ class ViterbiSearch(object):
         groups = _wrap_candidates(candidates)
         states = IndexedIterator(groups)
         for winner, _, _ in self.search_winners(states):
-            yield winner.body
-
+            try:
+                yield winner.body
+            except StopIteration:
+                return
 
 # Theoretically this naive viterbi search is slower than the
 # implementation of ViterbiSearch above. We put it here just for
