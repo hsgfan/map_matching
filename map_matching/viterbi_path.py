@@ -10,7 +10,6 @@ try:
 except ImportError:
     pass
 
-
 # A wrapper of candidate that is needed by viterbi search. The real
 # candidate is stored in the body attribute. All candidate objects in
 # this module refer to this wrapper.
@@ -72,6 +71,7 @@ class IndexedIterator(list):
     A combination object of list and iterator. The list caches all
     items fetched from the iterable.
     """
+
     def __init__(self, iterable):
         self.iterator = iter(iterable)
         self.buffer = []
@@ -185,8 +185,10 @@ class ViterbiSearch(object):
 
             if candidate is None:
                 # A new start
-                start_state = next(states) if winner is None else states[-1]
-
+                try:
+                    start_state = next(states) if winner is None else states[-1]
+                except StopIteration:
+                    return
                 pqueue = self._start(start_state)
                 winner = None
                 scanned_candidates = {}
@@ -254,10 +256,7 @@ class ViterbiSearch(object):
             if last_winner and new_start:
                 path = _reconstruct_path(last_winner, last_scanned_candidates)
                 for candidate in reversed(path):
-                    try:
-                        yield candidate.body
-                    except StopIteration:
-                        return
+                    yield candidate.body
             last_winner = winner
             last_scanned_candidates = scanned_candidates
 
@@ -265,10 +264,7 @@ class ViterbiSearch(object):
         if last_winner:
             path = _reconstruct_path(last_winner, last_scanned_candidates)
             for candidate in reversed(path):
-                try:
-                    yield candidate.body
-                except StopIteration:
-                    return
+                yield candidate.body
 
     # Online search only guarantees the local optimum (the winner at
     # current state). The knowledge about the furture candidates is
@@ -281,10 +277,8 @@ class ViterbiSearch(object):
         groups = _wrap_candidates(candidates)
         states = IndexedIterator(groups)
         for winner, _, _ in self.search_winners(states):
-            try:
-                yield winner.body
-            except StopIteration:
-                return
+            yield winner.body
+
 
 # Theoretically this naive viterbi search is slower than the
 # implementation of ViterbiSearch above. We put it here just for
@@ -294,6 +288,7 @@ class NaiveViterbiSearch(ViterbiSearch):
     The naive viterbi algorithm:
     https://en.wikipedia.org/wiki/Viterbi_algorithm
     """
+
     def search_winners(self, states):
         # A belief state is a list of tuples (prob, candidate,
         # previous candidate) to describe the probablitity of each
