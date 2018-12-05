@@ -126,6 +126,8 @@ def find_many_shortest_paths(source_node, target_nodes, get_edges, max_path_cost
             unachived_goal_count -= 1
         if unachived_goal_count == 0:
             break
+        if get_edges(cur_node) is None:
+            continue
         for adj_edge in get_edges(cur_node):
             assert adj_edge.start_node == cur_node
             adj_cost_sofar = cost_sofar + adj_edge.cost

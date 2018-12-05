@@ -351,10 +351,15 @@ def road_network_route_many(source_edge_location,
         if isinstance(node, AdHocNode):
             return adhoc_network[node]
         adhoc_edges = adhoc_network.get(node)
-        if adhoc_edges:
-            return itertools.chain(get_edges(node), adhoc_edges)
+        edges = get_edges(node)
+        if edges is not None and adhoc_edges is not None:
+            return itertools.chain(edges, adhoc_edges)
+        elif edges is not None:
+            return edges
+        elif adhoc_edges is not None:
+            return adhoc_edges
         else:
-            return get_edges(node)
+            return []
 
     return sp.find_many_shortest_paths(source_node, target_nodes, _get_edges, max_path_cost)
 
